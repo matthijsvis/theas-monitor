@@ -1,2 +1,4 @@
 .github export-ignore
 .gitattributes export-ignore
+bin export-ignore
+CLAUDE.md export-ignore

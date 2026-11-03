@@ -24,7 +24,7 @@ Nieuwe versies verschijnen vanzelf bij Plugins en Dashboard → Updates (via de 
 
 ## Een nieuwe versie uitbrengen
 
-Vanuit het verymooi-project: `bin/monitor-release.sh 1.2.0 "Wat er veranderd is"`. Dat zet de versie in
+Vanuit deze repo: `bin/release.sh 1.2.0 "Wat er veranderd is"`. Dat zet de versie in
 `theas-monitor.php`, maakt een commit en een tag en pusht; de workflow `.github/workflows/release.yml` maakt de
 zip en publiceert de release.
 
