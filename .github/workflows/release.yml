@@ -1,0 +1,36 @@
+# Bij een versietag (v1.2.0): controleren dat de versie in de plugin klopt, de zip maken (map theas-monitor/,
+# zonder .github en .gitattributes) en een release met die zip publiceren. WordPress haalt de update daar op.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Versie controleren
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          grep -q "^ \* Version: ${v}$" theas-monitor.php || { echo "::error::Version-header in theas-monitor.php is niet ${v}"; exit 1; }
+          grep -q "THEAS_MONITOR_VERSION = '${v}'" theas-monitor.php || { echo "::error::THEAS_MONITOR_VERSION is niet ${v}"; exit 1; }
+
+      - name: Zip maken
+        run: |
+          mkdir -p build/theas-monitor
+          git archive HEAD | tar -x -C build/theas-monitor
+          (cd build && zip -qr ../theas-monitor.zip theas-monitor)
+
+      - name: Release publiceren
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git fetch --force origin "refs/tags/${GITHUB_REF_NAME}:refs/tags/${GITHUB_REF_NAME}"
+          notes="$(git tag -l --format='%(contents)' "${GITHUB_REF_NAME}")"
+          gh release create "${GITHUB_REF_NAME}" theas-monitor.zip --title "${GITHUB_REF_NAME}" --notes "${notes:-Versie ${GITHUB_REF_NAME}}"
