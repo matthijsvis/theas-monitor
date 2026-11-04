@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Theas Monitor
  * Description: Geeft het Theas-dashboard (verymooi.nl) de status van deze website (versies, updates, Site Health, fouten, SEO) en een eenmalige inloglink voor wp-admin. Alleen bereikbaar met een ondertekend verzoek.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Theas
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const THEAS_MONITOR_VERSION = '1.1.0';
+const THEAS_MONITOR_VERSION = '1.1.1';
 const THEAS_MONITOR_WINDOW  = 300;
 const THEAS_MONITOR_FILE    = __FILE__;
 
