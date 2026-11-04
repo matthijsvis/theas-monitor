@@ -320,10 +320,11 @@ add_action( 'rest_api_init', function () {
 	) );
 } );
 
-// Sites die de REST-API voor gasten afschermen (zoals verymooi.nl zelf): deze routes regelen hun eigen toegang.
+// Sites die de REST-API voor gasten afschermen (zoals verymooi.nl zelf, of de plugin Password Protected):
+// deze routes regelen hun eigen toegang.
 add_filter( 'rest_authentication_errors', function ( $result ) {
 	$route = (string) ( $GLOBALS['wp']->query_vars['rest_route'] ?? '' );
-	return 0 === strpos( $route, '/theas-monitor/' ) && is_wp_error( $result ) && 'rest_not_logged_in' === $result->get_error_code() ? null : $result;
+	return 0 === strpos( $route, '/theas-monitor/' ) && is_wp_error( $result ) && in_array( $result->get_error_code(), array( 'rest_not_logged_in', 'rest_cannot_access' ), true ) ? null : $result;
 }, 99 );
 
 /* ---------- Instellingen ---------- */
