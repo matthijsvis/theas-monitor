@@ -19,7 +19,8 @@ pagina met een wachtwoordveld; ingelogde gebruikers, wp-admin en robots.txt blij
 ## Updates
 
 Nieuwe versies verschijnen vanzelf bij Plugins en Dashboard → Updates (via de header `Update URI` en
-`updater.php`); bijwerken is één klik, of zet automatisch bijwerken aan.
+`updater.php`); bijwerken is één klik, of zet automatisch bijwerken aan. Met *Check voor updates* bij de plugin op de
+pagina Plugins kijk je meteen of er een nieuwe versie is.
 
 ## Beveiliging
 

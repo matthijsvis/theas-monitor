@@ -86,3 +86,47 @@ add_filter( 'plugins_api', function ( $result, $action, $args ) {
 add_action( 'upgrader_process_complete', function () {
 	delete_site_transient( 'theas_monitor_release' );
 } );
+
+/* ---------- Knop "Check voor updates" (alleen bij Plugins) ---------- */
+
+add_filter( 'plugin_action_links_' . plugin_basename( THEAS_MONITOR_FILE ), function ( array $links ) {
+	if ( current_user_can( 'update_plugins' ) ) {
+		$links[] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=theas_monitor_check' ), 'theas_monitor_check' ) ) . '">Check voor updates</a>';
+	}
+	return $links;
+} );
+
+// Vraagt GitHub meteen om de nieuwste release, werkt de updatelijst van WordPress bij en gaat terug naar Plugins.
+add_action( 'admin_post_theas_monitor_check', function () {
+	check_admin_referer( 'theas_monitor_check' );
+	if ( ! current_user_can( 'update_plugins' ) ) {
+		wp_die( 'Je mag geen plugins bijwerken.', '', array( 'response' => 403 ) );
+	}
+	$release = theas_monitor_latest_release( true );
+	wp_clean_plugins_cache();
+	wp_update_plugins();
+	$result = ! $release ? 'error' : ( version_compare( $release['version'], THEAS_MONITOR_VERSION, '>' ) ? 'update' : 'current' );
+	wp_safe_redirect( add_query_arg( 'theas_monitor_check', $result, admin_url( 'plugins.php' ) ) );
+	exit;
+} );
+
+add_filter( 'removable_query_args', function ( array $args ) {
+	$args[] = 'theas_monitor_check';
+	return $args;
+} );
+
+add_action( 'admin_notices', function () {
+	$result = sanitize_key( $_GET['theas_monitor_check'] ?? '' ); // phpcs:ignore -- alleen lezen
+	if ( ! $result || 'plugins' !== get_current_screen()->id ) {
+		return;
+	}
+	$release = theas_monitor_latest_release();
+	$notices = array(
+		'current' => array( 'success', 'Theas Monitor is up-to-date (versie ' . THEAS_MONITOR_VERSION . ').' ),
+		'update'  => array( 'warning', 'Theas Monitor ' . ( $release['version'] ?? '' ) . ' is beschikbaar. Je kunt hem hieronder bijwerken.' ),
+		'error'   => array( 'error', 'Controleren op updates is niet gelukt: GitHub gaf geen antwoord. Probeer het later opnieuw.' ),
+	);
+	if ( isset( $notices[ $result ] ) ) {
+		printf( '<div class="notice notice-%s is-dismissible"><p>%s</p></div>', esc_attr( $notices[ $result ][0] ), esc_html( $notices[ $result ][1] ) );
+	}
+} );
