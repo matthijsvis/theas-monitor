@@ -10,6 +10,12 @@ Site Health, fouten, SEO van binnenuit, en een eenmalige inloglink voor wp-admin
 2. Activeer de plugin en kopieer bij *Instellingen → Theas Monitor* de koppelcode.
 3. Plak de koppelcode in het dashboard bij de website (*Monitor koppelen*).
 
+## Website afschermen
+
+Bij *Instellingen → Theas Monitor* kun je de hele website achter één wachtwoord zetten. Bezoekers zien dan een eigen
+pagina met een wachtwoordveld; ingelogde gebruikers, wp-admin en robots.txt blijven werken. Aan- en uitzetten zet ook
+*Zoekmachines ontmoedigen* aan en uit. De plugin Password Protected is daarmee niet meer nodig.
+
 ## Updates
 
 Nieuwe versies verschijnen vanzelf bij Plugins en Dashboard → Updates (via de header `Update URI` en

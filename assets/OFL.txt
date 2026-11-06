@@ -1,0 +1,3 @@
+Deze lettertypen staan onder de SIL Open Font License 1.1 (https://openfontlicense.org).
+Geist en Geist Mono – Copyright 2024 The Geist Project Authors (https://github.com/vercel/geist-font).
+Bron: Fontsource (subset Latijn, variabel).

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Theas Monitor
- * Description: Geeft het Theas-dashboard (verymooi.nl) de status van deze website (versies, updates, Site Health, fouten, SEO) en een eenmalige inloglink voor wp-admin. Alleen bereikbaar met een ondertekend verzoek.
+ * Description: Geeft het Theas-dashboard (verymooi.nl) de status van deze website (versies, updates, Site Health, fouten, SEO) en een eenmalige inloglink voor wp-admin. Alleen bereikbaar met een ondertekend verzoek. Kan de hele website afschermen met een wachtwoord.
  * Version: 1.1.1
  * Requires at least: 6.0
  * Requires PHP: 7.4
@@ -25,6 +25,7 @@ const THEAS_MONITOR_WINDOW  = 300;
 const THEAS_MONITOR_FILE    = __FILE__;
 
 require __DIR__ . '/updater.php';
+require __DIR__ . '/gate.php';
 
 register_activation_hook( __FILE__, 'theas_monitor_secret' );
 
@@ -345,6 +346,19 @@ function theas_monitor_settings_page(): void {
 	if ( isset( $_POST['theas_monitor_save'] ) && check_admin_referer( 'theas_monitor' ) ) {
 		update_option( 'theas_monitor_sso', empty( $_POST['sso'] ) ? 0 : 1, false );
 		update_option( 'theas_monitor_user', absint( $_POST['user'] ?? 0 ), false );
+		$gate_saved = theas_monitor_gate_save( array(
+			'enabled'  => ! empty( $_POST['gate'] ),
+			'admins'   => ! empty( $_POST['gate_admins'] ),
+			'users'    => ! empty( $_POST['gate_users'] ),
+			'feeds'    => ! empty( $_POST['gate_feeds'] ),
+			'rest'     => ! empty( $_POST['gate_rest'] ),
+			'ips'      => sanitize_textarea_field( wp_unslash( $_POST['gate_ips'] ?? '' ) ),
+			'remember' => ! empty( $_POST['gate_remember'] ),
+			'days'     => max( 1, absint( $_POST['gate_days'] ?? 14 ) ),
+		), wp_unslash( $_POST['gate_password'] ?? '' ) ); // phpcs:ignore -- wachtwoorden niet opschonen
+		if ( ! $gate_saved ) {
+			echo '<div class="notice notice-error"><p>Kies een wachtwoord om de website af te schermen. De afscherming is niet ingeschakeld.</p></div>';
+		}
 		if ( ! empty( $_POST['renew'] ) ) {
 			theas_monitor_secret( true );
 			echo '<div class="notice notice-warning"><p>Nieuw geheim aangemaakt. Koppel de website opnieuw in het dashboard.</p></div>';
@@ -354,6 +368,7 @@ function theas_monitor_settings_page(): void {
 	}
 	$admins = get_users( array( 'role' => 'administrator', 'orderby' => 'display_name' ) );
 	$chosen = theas_monitor_login_user();
+	$gate   = theas_monitor_gate_settings();
 	?>
 	<div class="wrap">
 		<h1>Theas Monitor</h1>
@@ -379,6 +394,44 @@ function theas_monitor_settings_page(): void {
 				<tr>
 					<th scope="row">Geheim vernieuwen</th>
 					<td><label><input type="checkbox" name="renew" value="1"> Nieuw geheim maken (de huidige koppeling werkt dan niet meer)</label></td>
+				</tr>
+			</table>
+			<h2>Website afschermen</h2>
+			<p>Bezoekers zien dan alleen een pagina met een wachtwoordveld. Zoekmachines ontmoedigen (Instellingen → Lezen) gaat automatisch mee aan en uit.</p>
+			<?php if ( $gate['enabled'] && is_plugin_active( 'password-protected/password-protected.php' ) ) : ?>
+				<div class="notice notice-warning inline"><p>De plugin Password Protected staat ook aan. Zet die uit, anders krijgen bezoekers twee keer een wachtwoord.</p></div>
+			<?php endif; ?>
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row">Afscherming</th>
+					<td><label><input type="checkbox" name="gate" value="1" <?php checked( $gate['enabled'] ); ?>> Website afschermen met een wachtwoord</label></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="theas-monitor-gate-password">Wachtwoord</label></th>
+					<td>
+						<input type="text" name="gate_password" id="theas-monitor-gate-password" class="regular-text" autocomplete="off">
+						<p class="description"><?php echo $gate['password'] ? 'Er is een wachtwoord ingesteld. Laat dit veld leeg om het te houden; een nieuw wachtwoord vraagt iedereen opnieuw om in te loggen.' : 'Nog geen wachtwoord ingesteld.'; ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Altijd toegang</th>
+					<td>
+						<label><input type="checkbox" name="gate_admins" value="1" <?php checked( $gate['admins'] ); ?>> Ingelogde beheerders</label><br>
+						<label><input type="checkbox" name="gate_users" value="1" <?php checked( $gate['users'] ); ?>> Alle ingelogde gebruikers</label><br>
+						<label><input type="checkbox" name="gate_feeds" value="1" <?php checked( $gate['feeds'] ); ?>> RSS-feeds</label><br>
+						<label><input type="checkbox" name="gate_rest" value="1" <?php checked( $gate['rest'] ); ?>> REST-API</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="theas-monitor-gate-ips">IP-adressen met toegang</label></th>
+					<td>
+						<textarea name="gate_ips" id="theas-monitor-gate-ips" rows="3" class="regular-text code"><?php echo esc_textarea( $gate['ips'] ); ?></textarea>
+						<p class="description">Eén adres per regel.</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Onthouden</th>
+					<td><label><input type="checkbox" name="gate_remember" value="1" <?php checked( $gate['remember'] ); ?>> "Onthoud mij" aanbieden, voor</label> <input type="number" name="gate_days" value="<?php echo (int) $gate['days']; ?>" min="1" class="small-text"> dagen</td>
 				</tr>
 			</table>
 			<?php submit_button( 'Opslaan', 'primary', 'theas_monitor_save' ); ?>

@@ -4,6 +4,7 @@ Deze map is de werkkopie van de plugin `theas-monitor`: een git-clone van de ope
 github.com/matthijsvis/theas-monitor (branch `main`). Alle wijzigingen aan de plugin gebeuren hier.
 
 - `theas-monitor.php`: status-endpoint, SEO, fouten, eenmalig inloggen, instellingenpagina.
+- `gate.php`, `gate-page.php`, `assets/`: de website afschermen met een wachtwoord (vervangt Password Protected).
 - `updater.php`: updates via GitHub-releases (`Update URI` + filter `update_plugins_github.com`).
 - `.github/workflows/release.yml`: bij een tag `v*` de zip `theas-monitor.zip` bouwen en een release publiceren.
 - `bin/release.sh` en `CLAUDE.md` zitten niet in de zip (`export-ignore` in `.gitattributes`).
