@@ -26,6 +26,7 @@ const THEAS_MONITOR_FILE    = __FILE__;
 
 require __DIR__ . '/updater.php';
 require __DIR__ . '/gate.php';
+require __DIR__ . '/admin-menu.php';
 
 register_activation_hook( __FILE__, 'theas_monitor_secret' );
 

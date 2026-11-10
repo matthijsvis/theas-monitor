@@ -16,6 +16,11 @@ Bij *Instellingen → Theas Monitor* kun je de hele website achter één wachtwo
 pagina met een wachtwoordveld; ingelogde gebruikers, wp-admin en robots.txt blijven werken. Aan- en uitzetten zet ook
 *Zoekmachines ontmoedigen* aan en uit. De plugin Password Protected is daarmee niet meer nodig.
 
+## Beheermenu
+
+Het linkermenu van wp-admin toont alleen het Dashboard, Berichten, Media, Pagina's en de eigen berichttypes; de rest
+(instellingen, plugins, formulieren, …) staat ingeklapt onder *Overig*.
+
 ## Updates
 
 Nieuwe versies verschijnen vanzelf bij Plugins en Dashboard → Updates (via de header `Update URI` en

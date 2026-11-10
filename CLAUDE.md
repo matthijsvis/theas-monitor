@@ -5,6 +5,7 @@ github.com/matthijsvis/theas-monitor (branch `main`). Alle wijzigingen aan de pl
 
 - `theas-monitor.php`: status-endpoint, SEO, fouten, eenmalig inloggen, instellingenpagina.
 - `gate.php`, `gate-page.php`, `assets/`: de website afschermen met een wachtwoord (vervangt Password Protected).
+- `admin-menu.php`: beheermenu met "Overig" (Dashboard, berichttypes, dan de rest ingeklapt).
 - `updater.php`: updates via GitHub-releases (`Update URI` + filter `update_plugins_github.com`).
 - `.github/workflows/release.yml`: bij een tag `v*` de zip `theas-monitor.zip` bouwen en een release publiceren.
 - `bin/release.sh` en `CLAUDE.md` zitten niet in de zip (`export-ignore` in `.gitattributes`).
