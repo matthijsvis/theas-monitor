@@ -1,7 +1,9 @@
 <?php
 /**
  * Overzichtelijk beheermenu (overgenomen van starfulness.nl): bovenaan het Dashboard, de standaard berichttypes
- * (Berichten, Media, Pagina's) en de eigen berichttypes; alles daaronder in- en uitklapbaar onder "Overig".
+ * (Berichten, Media, Pagina's), de eigen berichttypes, Formulieren (Gravity Forms) en snelkoppelingen naar de
+ * site-editor (zoals "Header & footer"); alles daaronder in- en uitklapbaar onder "Overig". Met het filter
+ * `theas_monitor_overig_top` kan een thema meer menu-items (slugs) zichtbaar houden.
  *
  * De items blijven echte WordPress-menu-items (met hun submenu's en markering van de huidige pagina); ze worden
  * alleen verborgen tot je "Overig" openklapt. Een thema dat dit zelf al doet (Starfulness) gaat voor.
@@ -29,13 +31,19 @@ add_filter( 'menu_order', function ( $order ) {
 	}
 	$top = array();
 	foreach ( $order as $slug ) {
-		if ( in_array( $slug, array( 'index.php', 'separator1', 'edit.php', 'upload.php' ), true ) || 0 === strpos( $slug, 'edit.php?post_type=' ) ) {
+		if ( theas_monitor_overig_on_top( $slug ) ) {
 			$top[] = $slug;
 		}
 	}
 	$top[] = THEAS_MONITOR_OVERIG;
 	return array_merge( $top, array_values( array_diff( $order, $top ) ) );
 }, 999 );
+
+/** Blijft dit menu-item (slug) boven "Overig" staan? */
+function theas_monitor_overig_on_top( string $slug ): bool {
+	$top = apply_filters( 'theas_monitor_overig_top', array( 'index.php', 'separator1', 'edit.php', 'upload.php', 'gf_edit_forms' ) );
+	return in_array( $slug, $top, true ) || 0 === strpos( $slug, 'edit.php?post_type=' ) || 0 === strpos( $slug, 'site-editor.php' );
+}
 
 /**
  * Menu-items die onder "Overig" vallen (alles dat na "Overig" in het menu staat).
