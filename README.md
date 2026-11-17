@@ -19,8 +19,9 @@ pagina met een wachtwoordveld; ingelogde gebruikers, wp-admin en robots.txt blij
 ## Meldingen en vragen
 
 - **Op de website** zien ingelogde gebruikers rechtsonder een ronde knop (verslepen kan; de plek wordt onthouden).
-  Daarmee stuur je een fout, wens of vraag, met desgewenst een gekozen element op de pagina en een schermafbeelding
-  van het tabblad (de browser vraagt eerst om toestemming).
+  Daarmee zet je fouten, wensen en vragen op een lijst (*Toevoegen*, ook over meerdere pagina's) en stuur je ze samen
+  (*Versturen*), elk met desgewenst een gekozen element op de pagina en een schermafbeelding (kiezen, plakken of erin
+  slepen; de knop legt uit hoe je er een maakt op je eigen systeem en in je browser).
 - **In wp-admin** staat op het dashboard de widget *Vraag aan Verymooi*.
 - Het Verymooi-dashboard haalt alles elk kwartier op (ondertekend) en toont het bij de website. Vragen gaan direct
   per mail naar de beheerder, fouten en wensen elke nacht om 0:00 in één mail.

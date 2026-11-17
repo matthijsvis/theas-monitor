@@ -2,8 +2,8 @@
 /**
  * Meldingen en vragen van ingelogde gebruikers, voor het Verymooi-dashboard.
  *
- * - Op de website: een verplaatsbare knop rechtsonder (assets/feedback.js) om een fout, wens of vraag te sturen,
- *   met een schermafbeelding van de pagina en een gekozen element.
+ * - Op de website: een verplaatsbare knop rechtsonder (assets/feedback.js) om fouten, wensen en vragen op een lijst te
+ *   zetten (ook over meerdere pagina's) en samen te versturen, elk met een schermafbeelding en een gekozen element.
  * - In wp-admin: de widget "Vraag aan Verymooi" op het dashboard.
  * Beide bewaren de melding hier (theas_feedback, alleen in de database). Het dashboard haalt ze elk kwartier op met
  * een ondertekend verzoek (GET /feedback) en bevestigt ze daarna (POST /feedback/ack), waarna ze hier verdwijnen.
@@ -160,6 +160,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_add_inline_script( 'theas-monitor-feedback', 'window.vmFeedback = ' . wp_json_encode( array(
 		'url'   => rest_url( 'theas-monitor/v1/feedback/new' ),
 		'nonce' => wp_create_nonce( 'wp_rest' ),
+		'user'  => get_current_user_id(),
 		'types' => THEAS_MONITOR_FEEDBACK_TYPES,
 	) ) . ';', 'before' );
 } );
