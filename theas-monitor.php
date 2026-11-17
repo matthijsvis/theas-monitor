@@ -323,6 +323,16 @@ add_action( 'rest_api_init', function () {
 	) );
 } );
 
+// Antwoorden van deze plugin nooit in een cache (SiteGround, Cloudflare, …): een bewaard antwoord op een ondertekend
+// verzoek zou anders zonder handtekening op te vragen zijn, en het dashboard kreeg oude gegevens.
+add_filter( 'rest_post_dispatch', function ( $response, $server, $request ) {
+	if ( 0 === strpos( $request->get_route(), '/theas-monitor/' ) && $response instanceof WP_HTTP_Response ) {
+		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0, private' );
+		$response->header( 'Pragma', 'no-cache' );
+	}
+	return $response;
+}, 10, 3 );
+
 // Sites die de REST-API voor gasten afschermen (zoals verymooi.nl zelf, of de plugin Password Protected):
 // deze routes regelen hun eigen toegang.
 add_filter( 'rest_authentication_errors', function ( $result ) {
