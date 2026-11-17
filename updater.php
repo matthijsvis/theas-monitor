@@ -66,17 +66,17 @@ add_filter( 'plugins_api', function ( $result, $action, $args ) {
 	}
 	$release = theas_monitor_latest_release();
 	return (object) array(
-		'name'          => 'Theas Monitor',
+		'name'          => 'Verymooi Monitor',
 		'slug'          => 'theas-monitor',
 		'version'       => $release['version'] ?? THEAS_MONITOR_VERSION,
-		'author'        => 'Theas',
+		'author'        => 'Verymooi',
 		'homepage'      => 'https://github.com/' . THEAS_MONITOR_REPO,
 		'requires'      => '6.0',
 		'requires_php'  => '7.4',
 		'download_link' => $release['package'] ?? '',
 		'last_updated'  => $release['date'] ?? '',
 		'sections'      => array(
-			'description' => '<p>Geeft het Theas-dashboard de status van deze website (versies, updates, Site Health, fouten, SEO) en een eenmalige inloglink voor wp-admin.</p>',
+			'description' => '<p>Geeft het Verymooi-dashboard de status van deze website (versies, updates, Site Health, fouten, SEO) en een eenmalige inloglink voor wp-admin. Ingelogde gebruikers kunnen fouten melden en vragen stellen.</p>',
 			'changelog'   => $release && $release['notes'] ? wpautop( esc_html( $release['notes'] ) ) : '<p>Zie <a href="https://github.com/' . THEAS_MONITOR_REPO . '/releases">GitHub</a>.</p>',
 		),
 	);
@@ -122,8 +122,8 @@ add_action( 'admin_notices', function () {
 	}
 	$release = theas_monitor_latest_release();
 	$notices = array(
-		'current' => array( 'success', 'Theas Monitor is up-to-date (versie ' . THEAS_MONITOR_VERSION . ').' ),
-		'update'  => array( 'warning', 'Theas Monitor ' . ( $release['version'] ?? '' ) . ' is beschikbaar. Je kunt hem hieronder bijwerken.' ),
+		'current' => array( 'success', 'Verymooi Monitor is up-to-date (versie ' . THEAS_MONITOR_VERSION . ').' ),
+		'update'  => array( 'warning', 'Verymooi Monitor ' . ( $release['version'] ?? '' ) . ' is beschikbaar. Je kunt hem hieronder bijwerken.' ),
 		'error'   => array( 'error', 'Controleren op updates is niet gelukt: GitHub gaf geen antwoord. Probeer het later opnieuw.' ),
 	);
 	if ( isset( $notices[ $result ] ) ) {

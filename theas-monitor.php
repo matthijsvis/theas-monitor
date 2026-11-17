@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: Theas Monitor
- * Description: Geeft het Theas-dashboard (verymooi.nl) de status van deze website (versies, updates, Site Health, fouten, SEO) en een eenmalige inloglink voor wp-admin. Alleen bereikbaar met een ondertekend verzoek. Kan de hele website afschermen met een wachtwoord.
+ * Plugin Name: Verymooi Monitor
+ * Description: Geeft het Verymooi-dashboard (verymooi.nl) de status van deze website (versies, updates, Site Health, fouten, SEO) en een eenmalige inloglink voor wp-admin. Alleen bereikbaar met een ondertekend verzoek. Kan de hele website afschermen met een wachtwoord, en ingelogde gebruikers kunnen fouten melden en vragen stellen.
  * Version: 1.4.1
  * Requires at least: 6.0
  * Requires PHP: 7.4
- * Author: Theas
+ * Author: Verymooi
  * License: GPL-2.0-or-later
  * Text Domain: theas-monitor
  * Update URI: https://github.com/matthijsvis/theas-monitor
  *
- * Koppelen: Instellingen → Theas Monitor → koppelcode kopiëren en in het dashboard plakken.
+ * Koppelen: Instellingen → Verymooi Monitor → koppelcode kopiëren en in het dashboard plakken.
  * Updates: nieuwe versies komen van GitHub en verschijnen gewoon bij Plugins (zie updater.php).
  *
  * Beveiliging: elk verzoek draagt de headers X-Theas-Time, X-Theas-Nonce en X-Theas-Signature,
@@ -27,6 +27,7 @@ const THEAS_MONITOR_FILE    = __FILE__;
 require __DIR__ . '/updater.php';
 require __DIR__ . '/gate.php';
 require __DIR__ . '/admin-menu.php';
+require __DIR__ . '/feedback.php';
 
 register_activation_hook( __FILE__, 'theas_monitor_secret' );
 
@@ -280,7 +281,7 @@ function theas_monitor_login_user(): ?WP_User {
 
 function theas_monitor_create_login(): array {
 	if ( ! get_option( 'theas_monitor_sso', 1 ) ) {
-		return array( 'url' => null, 'message' => 'Direct inloggen staat uit in Instellingen → Theas Monitor.' );
+		return array( 'url' => null, 'message' => 'Direct inloggen staat uit in Instellingen → Verymooi Monitor.' );
 	}
 	$user = theas_monitor_login_user();
 	if ( ! $user ) {
@@ -332,7 +333,7 @@ add_filter( 'rest_authentication_errors', function ( $result ) {
 /* ---------- Instellingen ---------- */
 
 add_action( 'admin_menu', function () {
-	add_options_page( 'Theas Monitor', 'Theas Monitor', 'manage_options', 'theas-monitor', 'theas_monitor_settings_page' );
+	add_options_page( 'Verymooi Monitor', 'Verymooi Monitor', 'manage_options', 'theas-monitor', 'theas_monitor_settings_page' );
 } );
 
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function ( array $links ) {
@@ -347,6 +348,7 @@ function theas_monitor_settings_page(): void {
 	if ( isset( $_POST['theas_monitor_save'] ) && check_admin_referer( 'theas_monitor' ) ) {
 		update_option( 'theas_monitor_sso', empty( $_POST['sso'] ) ? 0 : 1, false );
 		update_option( 'theas_monitor_user', absint( $_POST['user'] ?? 0 ), false );
+		update_option( 'theas_monitor_feedback', array( 'button' => ! empty( $_POST['feedback_button'] ), 'widget' => ! empty( $_POST['feedback_widget'] ) ) );
 		$gate_saved = theas_monitor_gate_save( array(
 			'enabled'  => ! empty( $_POST['gate'] ),
 			'admins'   => ! empty( $_POST['gate_admins'] ),
@@ -370,9 +372,10 @@ function theas_monitor_settings_page(): void {
 	$admins = get_users( array( 'role' => 'administrator', 'orderby' => 'display_name' ) );
 	$chosen = theas_monitor_login_user();
 	$gate   = theas_monitor_gate_settings();
+	$feedback = theas_monitor_feedback_settings();
 	?>
 	<div class="wrap">
-		<h1>Theas Monitor</h1>
+		<h1>Verymooi Monitor</h1>
 		<p>Plak deze koppelcode in het dashboard bij de website (<em>Monitor koppelen</em>). Behandel hem als een wachtwoord.</p>
 		<p><textarea readonly rows="3" class="large-text code" onclick="this.select()"><?php echo esc_textarea( theas_monitor_pair_code() ); ?></textarea></p>
 		<form method="post">
@@ -433,6 +436,18 @@ function theas_monitor_settings_page(): void {
 				<tr>
 					<th scope="row">Onthouden</th>
 					<td><label><input type="checkbox" name="gate_remember" value="1" <?php checked( $gate['remember'] ); ?>> "Onthoud mij" aanbieden, voor</label> <input type="number" name="gate_days" value="<?php echo (int) $gate['days']; ?>" min="1" class="small-text"> dagen</td>
+				</tr>
+			</table>
+			<h2>Meldingen en vragen</h2>
+			<p>Meldingen en vragen komen in het Verymooi-dashboard; daar gaan ze ook per mail naar de beheerder (vragen direct, meldingen elke nacht om 0:00).</p>
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row">Meldknop</th>
+					<td><label><input type="checkbox" name="feedback_button" value="1" <?php checked( $feedback['button'] ); ?>> Ingelogde gebruikers zien op de website een knop om iets te melden (met schermafbeelding en een gekozen element)</label></td>
+				</tr>
+				<tr>
+					<th scope="row">Vraag op het dashboard</th>
+					<td><label><input type="checkbox" name="feedback_widget" value="1" <?php checked( $feedback['widget'] ); ?>> Widget <em>Vraag aan Verymooi</em> op het dashboard van wp-admin</label></td>
 				</tr>
 			</table>
 			<?php submit_button( 'Opslaan', 'primary', 'theas_monitor_save' ); ?>

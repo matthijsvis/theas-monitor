@@ -1,10 +1,12 @@
-# Theas Monitor (WordPress-plugin)
+# Verymooi Monitor (WordPress-plugin, slug `theas-monitor`)
 
 Deze map is de werkkopie van de plugin `theas-monitor`: een git-clone van de openbare repo
 github.com/matthijsvis/theas-monitor (branch `main`). Alle wijzigingen aan de plugin gebeuren hier.
 
 - `theas-monitor.php`: status-endpoint, SEO, fouten, eenmalig inloggen, instellingenpagina.
 - `gate.php`, `gate-page.php`, `assets/`: de website afschermen met een wachtwoord (vervangt Password Protected).
+- `feedback.php`, `assets/feedback.js`: meldknop op de website en widget *Vraag aan Verymooi* in wp-admin; het dashboard
+  haalt de meldingen op (`GET /feedback`, `POST /feedback/ack`).
 - `admin-menu.php`: beheermenu met "Overig" (Dashboard, berichttypes, dan de rest ingeklapt).
 - `updater.php`: updates via GitHub-releases (`Update URI` + filter `update_plugins_github.com`).
 - `.github/workflows/release.yml`: bij een tag `v*` de zip `theas-monitor.zip` bouwen en een release publiceren.
@@ -24,7 +26,10 @@ github.com/matthijsvis/theas-monitor (branch `main`). Alle wijzigingen aan de pl
 ## Afspraken
 
 - Geen geheimen in de code: het gedeelde geheim staat alleen in de database van de site en van het dashboard.
-- Elke nieuwe REST-route blijft achter `permission_callback => 'theas_monitor_verify'` (HMAC-handtekening).
+- Elke nieuwe REST-route voor het dashboard blijft achter `permission_callback => 'theas_monitor_verify'` (HMAC-handtekening).
+  Uitzondering: `POST /feedback/new` voor ingelogde gebruikers van de website zelf (REST-nonce, `is_user_logged_in`).
+- De naam is Verymooi Monitor; slug, map, opties, functies en routes heten nog `theas-monitor`/`theas_monitor`. Niet
+  hernoemen: daar hangen updates, koppelingen en het dashboard aan.
 - De velden van `theas_monitor_status()` worden gelezen door het dashboard in het verymooi-project
   (`~/Desktop/websites/Verymooi/verymooi.nl/wp-content/themes/theas/inc/monitor.php`); hernoem of verwijder ze niet
   zonder dat ook daar aan te passen. Alleen toevoegen is veilig.

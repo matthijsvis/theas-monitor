@@ -1,6 +1,6 @@
 <?php
 /**
- * Website afschermen met één wachtwoord (Instellingen → Theas Monitor), zoals de plugin Password Protected.
+ * Website afschermen met één wachtwoord (Instellingen → Verymooi Monitor), zoals de plugin Password Protected.
  *
  * Bezoekers zien in plaats van de site een eigen pagina met een wachtwoordveld (gate-page.php). Een goed wachtwoord
  * geeft een ondertekend cookie; een nieuw wachtwoord maakt bestaande cookies ongeldig. wp-admin, wp-login.php,

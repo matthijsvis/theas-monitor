@@ -1,20 +1,30 @@
-# Theas Monitor
+# Verymooi Monitor
 
-WordPress-plugin die het Theas-dashboard (verymooi.nl) de status van een website geeft: versies, updates,
+WordPress-plugin die het Verymooi-dashboard (verymooi.nl) de status van een website geeft: versies, updates,
 Site Health, fouten, SEO van binnenuit, en een eenmalige inloglink voor wp-admin.
 
 ## Installeren
 
 1. Download [`theas-monitor.zip`](https://github.com/matthijsvis/theas-monitor/releases/latest/download/theas-monitor.zip)
    en upload hem in wp-admin → Plugins → Nieuwe plugin.
-2. Activeer de plugin en kopieer bij *Instellingen → Theas Monitor* de koppelcode.
+2. Activeer de plugin en kopieer bij *Instellingen → Verymooi Monitor* de koppelcode.
 3. Plak de koppelcode in het dashboard bij de website (*Monitor koppelen*).
 
 ## Website afschermen
 
-Bij *Instellingen → Theas Monitor* kun je de hele website achter één wachtwoord zetten. Bezoekers zien dan een eigen
+Bij *Instellingen → Verymooi Monitor* kun je de hele website achter één wachtwoord zetten. Bezoekers zien dan een eigen
 pagina met een wachtwoordveld; ingelogde gebruikers, wp-admin en robots.txt blijven werken. Aan- en uitzetten zet ook
 *Zoekmachines ontmoedigen* aan en uit. De plugin Password Protected is daarmee niet meer nodig.
+
+## Meldingen en vragen
+
+- **Op de website** zien ingelogde gebruikers rechtsonder een ronde knop (verslepen kan; de plek wordt onthouden).
+  Daarmee stuur je een fout, wens of vraag, met desgewenst een gekozen element op de pagina en een schermafbeelding
+  van het tabblad (de browser vraagt eerst om toestemming).
+- **In wp-admin** staat op het dashboard de widget *Vraag aan Verymooi*.
+- Het Verymooi-dashboard haalt alles elk kwartier op (ondertekend) en toont het bij de website. Vragen gaan direct
+  per mail naar de beheerder, fouten en wensen elke nacht om 0:00 in één mail.
+- Uitzetten per website bij *Instellingen → Verymooi Monitor*.
 
 ## Beheermenu
 
