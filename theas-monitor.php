@@ -155,6 +155,32 @@ function theas_monitor_status(): array {
 		'errors'      => theas_monitor_errors(),
 		'auto_core'   => (string) get_site_option( 'auto_update_core_major', '' ),
 		'seo'         => theas_monitor_seo(),
+		'content'     => theas_monitor_content(),
+	);
+}
+
+/**
+ * Wanneer de inhoud voor het laatst is gewijzigd: het nieuwste bericht, pagina, menu-item, afbeelding of sjabloon
+ * (alles in wp_posts behalve revisies, concepten in wording, de prullenbak en technische soorten), plus het aantal.
+ * Eén query, alleen als het dashboard erom vraagt. Het dashboard legt dit naast dezelfde query op de lokale kopie
+ * (bin/claude-sync.py in het verymooi-project), dus de voorwaarden moeten daar gelijk blijven.
+ */
+function theas_monitor_content(): array {
+	global $wpdb;
+	$skip  = "p.post_type NOT IN ( 'revision', 'customize_changeset', 'oembed_cache', 'user_request', 'theas_feedback', 'scheduled-action' ) AND p.post_status NOT IN ( 'auto-draft', 'trash' )";
+	$count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} p WHERE $skip" ); // phpcs:ignore -- vaste query
+	$last  = $wpdb->get_row( "SELECT p.ID, p.post_title, p.post_type, p.post_modified_gmt FROM {$wpdb->posts} p WHERE $skip AND p.post_modified_gmt > '1971-01-01' ORDER BY p.post_modified_gmt DESC LIMIT 1" ); // phpcs:ignore -- vaste query
+	if ( ! $last ) {
+		return array( 'modified' => 0, 'count' => $count );
+	}
+	$editor = get_userdata( (int) get_post_meta( $last->ID, '_edit_last', true ) );
+	$type   = get_post_type_object( $last->post_type );
+	return array(
+		'modified' => strtotime( $last->post_modified_gmt . ' UTC' ),
+		'count'    => $count,
+		'title'    => wp_strip_all_tags( $last->post_title ),
+		'type'     => $type ? $type->labels->singular_name : $last->post_type,
+		'editor'   => $editor ? $editor->display_name : '',
 	);
 }
 

@@ -33,5 +33,7 @@ github.com/matthijsvis/theas-monitor (branch `main`). Alle wijzigingen aan de pl
 - De velden van `theas_monitor_status()` worden gelezen door het dashboard in het verymooi-project
   (`~/Desktop/websites/Verymooi/verymooi.nl/wp-content/themes/theas/inc/monitor.php`); hernoem of verwijder ze niet
   zonder dat ook daar aan te passen. Alleen toevoegen is veilig.
+- `theas_monitor_content()` (laatste inhoudswijziging in `/status`) gebruikt dezelfde voorwaarden als `CONTENT_SQL` in
+  `bin/claude-sync.py` van het verymooi-project, dat de lokale kopieën controleert; pas ze samen aan.
 - Minimaal WordPress 6.0 en PHP 7.4 (geen syntax van nieuwere PHP-versies).
 - Stijl: tabs, WordPress-codeerstijl, Nederlandse commentaren en teksten, net als de bestaande code.
