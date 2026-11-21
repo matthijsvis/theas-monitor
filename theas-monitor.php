@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Verymooi Monitor
  * Description: Geeft het Verymooi-dashboard (verymooi.nl) de status van deze website (versies, updates, Site Health, fouten, SEO) en een eenmalige inloglink voor wp-admin. Alleen bereikbaar met een ondertekend verzoek. Kan de hele website afschermen met een wachtwoord, en ingelogde gebruikers kunnen fouten melden en vragen stellen.
- * Version: 1.5.2
+ * Version: 1.6.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Verymooi
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const THEAS_MONITOR_VERSION = '1.5.2';
+const THEAS_MONITOR_VERSION = '1.6.0';
 const THEAS_MONITOR_WINDOW  = 300;
 const THEAS_MONITOR_FILE    = __FILE__;
 
