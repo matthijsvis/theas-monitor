@@ -16,6 +16,14 @@ Bij *Instellingen → Verymooi Monitor* kun je de hele website achter één wach
 pagina met een wachtwoordveld; ingelogde gebruikers, wp-admin en robots.txt blijven werken. Aan- en uitzetten zet ook
 *Zoekmachines ontmoedigen* aan en uit. De plugin Password Protected is daarmee niet meer nodig.
 
+## Inlogscherm
+
+Het inlogscherm van WordPress (`wp-login.php`, ook *Wachtwoord vergeten* en *Nieuw wachtwoord*) krijgt dezelfde look als
+dat van verymooi.nl en als de wachtwoordpagina: links het icoon, de naam en het adres van de website met het formulier,
+rechts een stippenveld met het icoon in het midden. Het icoon is het Site-pictogram (*Instellingen → Algemeen*);
+zonder pictogram staat er de eerste letter van de naam. Licht of donker volgt het systeem van de bezoeker. Uitzetten
+kan met `add_filter( 'theas_monitor_login_style', '__return_false' );`.
+
 ## Meldingen en vragen
 
 - **Op de website** zien ingelogde gebruikers rechtsonder een balk (verslepen kan; de plek wordt onthouden). Bovenin

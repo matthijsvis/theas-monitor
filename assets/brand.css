@@ -1,0 +1,63 @@
+/* Lettertypen, kleuren en het icoon van de website voor de eigen pagina's van de plugin (wachtwoordpagina en
+   inlogscherm), in de stijl van verymooi.nl. Licht of donker volgt het systeem. */
+
+@font-face { font-family: "Geist"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(geist.woff2) format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-style: normal; font-weight: 100 900; font-display: swap; src: url(geist-mono.woff2) format("woff2"); }
+
+:root {
+	--bg: #deddd6;
+	--ink: #1a1614;
+	--ink-hover: #3a332f;
+	--cream: #f5f4ef;
+	--muted: #67625c;
+	--faint: #6f6a64;
+	--hi: 255 255 255;
+	--lo: 26 22 20;
+	--orange: #ff8547;
+	--olive: #a8a22c;
+	--disc: #f5f4ef; /* ondergrond onder het icoon van de website */
+	--card-alpha: 0.4;
+	--field-alpha: 0.6;
+	--edge-alpha: 0.55;
+	--note-alpha: 0.5;
+	--font: "Geist", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+	color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #191715;
+		--ink: #f5f4ef;
+		--ink-hover: #dedcd5;
+		--cream: #1a1614;
+		--muted: #aaa49c;
+		--faint: #98928b;
+		--hi: 255 255 255;
+		--lo: 245 244 239;
+		--disc: #2a2724;
+		--card-alpha: 0.05;
+		--field-alpha: 0.06;
+		--edge-alpha: 0.08;
+		--note-alpha: 0.06;
+		color-scheme: dark;
+	}
+}
+
+/* Icoon van de website (Instellingen → Algemeen → Site-pictogram), of de eerste letter van de naam. */
+.theas-mark {
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	margin: 0 0 20px;
+	overflow: hidden;
+	border-radius: 11px;
+	background: var(--ink);
+	box-shadow: 0 0 0 1px rgb(var(--lo) / 0.08);
+	color: var(--cream);
+	font: 500 19px/1 var(--font);
+	letter-spacing: 0;
+}
+.theas-mark--icon { background: var(--disc); }
+.theas-mark img { display: block; width: 100%; height: 100%; object-fit: cover; }

@@ -1,6 +1,7 @@
 <?php
 /**
  * De pagina die bezoekers van een afgeschermde website zien. Staat los van het thema; $failed komt uit gate.php.
+ * Het icoon, de naam en het stippenveld komen uit login.php, zodat dit scherm en het inlogscherm gelijk blijven.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -13,13 +14,15 @@ $theas_gate_url = plugin_dir_url( THEAS_MONITOR_FILE ) . 'assets/';
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="noindex, nofollow">
-	<title><?php echo esc_html( get_bloginfo( 'name' ) ); ?></title>
+	<title><?php echo esc_html( theas_monitor_site_name() ); ?></title>
 	<?php wp_site_icon(); ?>
+	<link rel="stylesheet" href="<?php echo esc_url( $theas_gate_url . 'brand.css?ver=' . THEAS_MONITOR_VERSION ); ?>">
 	<link rel="stylesheet" href="<?php echo esc_url( $theas_gate_url . 'gate.css?ver=' . THEAS_MONITOR_VERSION ); ?>">
 </head>
 <body>
 	<main class="gate">
-		<h1><?php echo esc_html( get_bloginfo( 'name' ) ); ?></h1>
+		<?php echo theas_monitor_site_mark(); // phpcs:ignore -- ge-escaped in de functie ?>
+		<h1><?php echo esc_html( theas_monitor_site_name() ); ?></h1>
 		<p class="gate__note">Besloten website · wachtwoord</p>
 		<?php if ( $failed ) : ?>
 			<p class="gate__error" role="alert">Dit wachtwoord klopt niet.</p>
@@ -40,7 +43,8 @@ $theas_gate_url = plugin_dir_url( THEAS_MONITOR_FILE ) . 'assets/';
 			</div>
 		</form>
 	</main>
-	<div class="gate__art" aria-hidden="true"><canvas></canvas></div>
+	<?php echo theas_monitor_site_art( 'gate__art' ); // phpcs:ignore -- ge-escaped in de functie ?>
 	<script src="<?php echo esc_url( $theas_gate_url . 'gate.js?ver=' . THEAS_MONITOR_VERSION ); ?>" defer></script>
+	<script src="<?php echo esc_url( $theas_gate_url . 'dots.js?ver=' . THEAS_MONITOR_VERSION ); ?>" defer></script>
 </body>
 </html>

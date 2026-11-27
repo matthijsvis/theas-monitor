@@ -5,6 +5,11 @@ github.com/matthijsvis/theas-monitor (branch `main`). Alle wijzigingen aan de pl
 
 - `theas-monitor.php`: status-endpoint, SEO, fouten, eenmalig inloggen, instellingenpagina.
 - `gate.php`, `gate-page.php`, `assets/`: de website afschermen met een wachtwoord (vervangt Password Protected).
+- `login.php`, `assets/login.css`: inlogscherm (wp-login.php) in de stijl van verymooi.nl, met de naam en het
+  Site-pictogram van de website (zonder pictogram de eerste letter). Niet op verymooi.nl zelf (daar doet het thema
+  `theas` het; herkend aan `theas_login_interim()`), uit te zetten met het filter `theas_monitor_login_style`.
+  Gedeeld met de wachtwoordpagina: `assets/brand.css` (lettertypen, kleuren, icoontegel) en `assets/dots.js` (stippenveld
+  met het icoon in het midden). Houd beide schermen gelijk.
 - `feedback.php`, `assets/feedback.js`: balk op de website (Live/Lokaal, *Pagina bewerken*, *Iets melden*) en widget
   *Vraag aan Verymooi* in wp-admin; het dashboard haalt de meldingen op (`GET /feedback`, `POST /feedback/ack`).
 - `site-editor.php`, `assets/site-editor.js`: waarschuwing bij *Site bewerken* (blokthema's): alleen header en footer.
@@ -33,7 +38,7 @@ github.com/matthijsvis/theas-monitor (branch `main`). Alle wijzigingen aan de pl
 - De naam is Verymooi Monitor; slug, map, opties, functies en routes heten nog `theas-monitor`/`theas_monitor`. Niet
   hernoemen: daar hangen updates, koppelingen en het dashboard aan.
 - De velden van `theas_monitor_status()` worden gelezen door het dashboard in het verymooi-project
-  (`~/Desktop/websites/Verymooi/verymooi.nl/wp-content/themes/theas/inc/monitor.php`); hernoem of verwijder ze niet
+  (`../../Verymooi/verymooi.nl/wp-content/themes/theas/inc/monitor.php`); hernoem of verwijder ze niet
   zonder dat ook daar aan te passen. Alleen toevoegen is veilig.
 - `theas_monitor_content()` (laatste inhoudswijziging in `/status`) gebruikt dezelfde voorwaarden als `CONTENT_SQL` in
   `bin/claude-sync.py` van het verymooi-project, dat de lokale kopieën controleert; pas ze samen aan.

@@ -37,7 +37,7 @@ git push -q origin HEAD "v$VERSION"
 echo "v$VERSION gepusht. De release verschijnt over een minuut op https://github.com/matthijsvis/theas-monitor/releases"
 echo "Websites zien de update binnen 12 uur bij Plugins (of direct via Dashboard → Updates → Opnieuw controleren)."
 
-VERYMOOI="$HOME/Desktop/websites/Verymooi/verymooi.nl/wp-content/plugins/theas-monitor"
+VERYMOOI="$(cd ../.. && pwd)/Verymooi/verymooi.nl/wp-content/plugins/theas-monitor" # websites-map, naast plugins/
 if [[ -d "$VERYMOOI/.git" ]]; then
 	if [[ -z "$(git -C "$VERYMOOI" status --porcelain)" ]] && git -C "$VERYMOOI" pull -q --ff-only origin main; then
 		echo "Kopie in het verymooi-project bijgewerkt naar v$VERSION."

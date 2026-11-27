@@ -1,0 +1,172 @@
+/* Inlogscherm (wp-login.php) in de stijl van verymooi.nl, net als de wachtwoordpagina. Bouwt op brand.css (lettertypen,
+   kleuren, icoon) en gaat over login.css van WordPress heen. Links het icoon, de naam en het formulier, rechts het
+   stippenveld (dots.js). Smal: stippen boven. */
+
+html { background: var(--bg); }
+
+body.theas-login {
+	display: grid;
+	grid-template-columns: minmax(380px, 0.85fr) minmax(0, 1.15fr);
+	min-height: 100vh;
+	min-height: 100dvh;
+	background: var(--bg);
+	color: var(--ink);
+	font: 400 14.5px/1.5 var(--font);
+	-webkit-font-smoothing: antialiased;
+}
+body.theas-login.interim-login { display: block; min-height: 0; }
+
+/* Stippenveld */
+.theas-login-art { position: relative; grid-column: 2; grid-row: 1; min-height: 100vh; min-height: 100dvh; border-left: 1px dashed rgb(var(--lo) / 0.2); }
+.theas-login-art canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* Formulierkant */
+.theas-login #login {
+	grid-column: 1;
+	grid-row: 1;
+	align-self: center;
+	justify-self: center;
+	width: min(360px, 100% - 32px);
+	padding: 48px 0;
+	margin: 0;
+}
+.theas-login.interim-login #login { width: min(360px, 100% - 32px); margin: 0 auto; padding: 28px 0; }
+
+.theas-login h1.wp-login-logo { margin: 0 0 30px; text-align: left; }
+.theas-login h1.wp-login-logo a {
+	display: block;
+	width: auto;
+	height: auto;
+	margin: 0;
+	padding: 0;
+	background: none;
+	text-indent: 0;
+	overflow: visible;
+	color: var(--ink);
+	font: inherit;
+	text-decoration: none;
+}
+.theas-login h1.wp-login-logo a:focus { box-shadow: none; outline: 1.5px solid var(--ink); outline-offset: 4px; border-radius: 4px; }
+.theas-login__name {
+	display: block;
+	font: 500 clamp(34px, 3.6vw, 46px)/1.08 var(--font);
+	letter-spacing: -0.04em;
+	overflow-wrap: anywhere;
+}
+.theas-login__note {
+	display: block;
+	margin-top: 12px;
+	font: 500 11px/1.4 var(--mono);
+	letter-spacing: 0.04em;
+	color: var(--faint);
+}
+.interim-login .theas-mark { display: none; }
+.interim-login .theas-login__name { font-size: 28px; }
+
+.theas-login form {
+	margin: 0;
+	padding: 22px 22px 20px;
+	border: 1px solid rgb(var(--hi) / var(--edge-alpha));
+	border-radius: 16px;
+	background: rgb(var(--hi) / var(--card-alpha));
+	box-shadow: 0 0 0 1px rgb(var(--lo) / 0.08), 0 14px 34px -14px rgb(26 22 20 / 0.18);
+	overflow: visible;
+	display: flow-root; /* "Onthoud mij" en de knop zweven links en rechts */
+}
+
+.theas-login label { color: var(--muted); font-size: 13px; }
+.theas-login form .input, .theas-login input[type="text"], .theas-login input[type="password"], .theas-login input[type="email"] {
+	min-height: 42px;
+	margin: 4px 0 16px;
+	padding: 0 12px;
+	border: 1px solid rgb(var(--lo) / 0.15);
+	border-radius: 10px;
+	background: rgb(var(--hi) / var(--field-alpha));
+	color: var(--ink);
+	font-family: var(--font);
+	font-size: 16px;
+	box-shadow: none;
+}
+.theas-login form .input:focus, .theas-login input[type="text"]:focus, .theas-login input[type="password"]:focus, .theas-login input[type="email"]:focus {
+	border-color: var(--ink);
+	outline: none;
+	box-shadow: 0 0 0 3px rgb(var(--lo) / 0.08);
+}
+.theas-login .wp-pwd { position: relative; }
+.theas-login .button.wp-hide-pw { top: 4px; height: 42px; min-width: 42px; border: 0; background: none; color: var(--muted); }
+.theas-login .button.wp-hide-pw:hover { color: var(--ink); }
+.theas-login .button.wp-hide-pw:focus { border-color: transparent; box-shadow: none; outline: 1.5px solid var(--ink); }
+.theas-login .button.wp-hide-pw .dashicons { top: 0.6rem; color: inherit; }
+
+.theas-login .forgetmenot { display: flex; align-items: center; gap: 2px; min-height: 40px; margin: 0; }
+.theas-login .forgetmenot label { font-size: 13px; }
+.theas-login input[type="checkbox"] { border-color: rgb(var(--lo) / 0.25); border-radius: 4px; background: rgb(var(--hi) / var(--field-alpha)); box-shadow: none; }
+.theas-login input[type="checkbox"]:focus { border-color: var(--ink); box-shadow: 0 0 0 2px rgb(var(--lo) / 0.12); }
+.theas-login input[type="checkbox"]:checked::before { filter: grayscale(1) brightness(0.2); }
+@media (prefers-color-scheme: dark) { .theas-login input[type="checkbox"]:checked::before { filter: grayscale(1) brightness(3); } }
+.theas-login .wp-tooltip__toggle { color: var(--faint); }
+.theas-login .wp-tooltip__toggle:hover { color: var(--ink); }
+
+/* Knop: donkere pil zoals op verymooi.nl */
+.theas-login .submit { margin-top: 2px; }
+.wp-core-ui.theas-login .button-primary {
+	float: right;
+	min-height: 40px;
+	padding: 0 20px;
+	border: 0;
+	border-radius: 999px;
+	background: var(--ink);
+	color: var(--cream);
+	font-family: var(--font);
+	font-weight: 500;
+	font-size: 14px;
+	text-shadow: none;
+	box-shadow: none;
+}
+.wp-core-ui.theas-login .button-primary:hover, .wp-core-ui.theas-login .button-primary:focus {
+	background: var(--ink-hover);
+	color: var(--cream);
+	box-shadow: none;
+	outline: 1.5px solid var(--ink);
+	outline-offset: 2px;
+}
+.theas-login .reset-pass-submit { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.theas-login .reset-pass-submit .button { float: none; }
+.wp-core-ui.theas-login .button-secondary:not(.wp-hide-pw) { border-color: rgb(var(--lo) / 0.15); border-radius: 999px; background: none; color: var(--ink); }
+
+/* Links onder het formulier */
+.theas-login #nav, .theas-login #backtoblog, .theas-login .privacy-policy-page-link {
+	margin: 6px 0 0;
+	padding: 0 4px;
+	text-align: left;
+	font: 500 11.5px/1.5 var(--mono);
+}
+.theas-login #nav { margin-top: 18px; }
+.theas-login #nav a, .theas-login #backtoblog a, .theas-login .privacy-policy-page-link a { color: var(--muted); text-decoration: none; }
+.theas-login #nav a:hover, .theas-login #backtoblog a:hover, .theas-login .privacy-policy-page-link a:hover { color: var(--ink); }
+.theas-login #nav a:focus, .theas-login #backtoblog a:focus, .theas-login .privacy-policy-page-link a:focus { box-shadow: none; outline: 1.5px solid var(--ink); outline-offset: 2px; }
+
+/* Meldingen */
+.theas-login .message, .theas-login .notice, .theas-login .success, .theas-login #login_error {
+	margin: 0 0 16px;
+	padding: 10px 14px;
+	border: 0;
+	border-left: 3px solid var(--olive);
+	border-radius: 10px;
+	background: rgb(var(--hi) / var(--note-alpha));
+	color: var(--ink);
+	font-size: 13.5px;
+	box-shadow: none;
+}
+.theas-login #login_error, .theas-login .notice-error { border-left-color: var(--orange); }
+.theas-login #login_error a, .theas-login .message a { color: inherit; }
+.theas-login .description, .theas-login .indicator-hint { color: var(--muted); font-size: 12.5px; }
+.theas-login #pass-strength-result { border-radius: 8px; }
+
+/* Smal: stippen bovenaan, formulier eronder. */
+@media (max-width: 860px) {
+	body.theas-login { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; }
+	.theas-login-art { grid-column: 1; grid-row: 1; min-height: 0; height: 38vh; border-left: 0; border-bottom: 1px dashed rgb(var(--lo) / 0.2); }
+	.theas-login #login { grid-row: 2; align-self: start; padding: 28px 0 40px; }
+	.theas-login h1.wp-login-logo { margin-bottom: 22px; }
+}

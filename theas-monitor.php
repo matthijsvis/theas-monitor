@@ -26,6 +26,7 @@ const THEAS_MONITOR_FILE    = __FILE__;
 
 require __DIR__ . '/updater.php';
 require __DIR__ . '/gate.php';
+require __DIR__ . '/login.php';
 require __DIR__ . '/admin-menu.php';
 require __DIR__ . '/feedback.php';
 require __DIR__ . '/site-editor.php';
