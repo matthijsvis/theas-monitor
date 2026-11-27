@@ -2,8 +2,9 @@
 /**
  * Meldingen en vragen van ingelogde gebruikers, voor het Verymooi-dashboard.
  *
- * - Op de website: een verplaatsbare knop rechtsonder (assets/feedback.js) om fouten, wensen en vragen op een lijst te
- *   zetten (ook over meerdere pagina's) en samen te versturen, elk met een schermafbeelding en een gekozen element.
+ * - Op de website: een verplaatsbare balk rechtsonder (assets/feedback.js) die laat zien dat je op de voorkant van de
+ *   live website zit, met de knoppen "Pagina bewerken" en "Iets melden". Met die laatste zet je fouten, wensen en vragen
+ *   op een lijst (ook over meerdere pagina's) en verstuur je ze samen, elk met een schermafbeelding en een gekozen element.
  * - In wp-admin: de widget "Vraag aan Verymooi" op het dashboard.
  * Beide bewaren de melding hier (theas_feedback, alleen in de database). Het dashboard haalt ze elk kwartier op met
  * een ondertekend verzoek (GET /feedback) en bevestigt ze daarna (POST /feedback/ack), waarna ze hier verdwijnen.
@@ -138,7 +139,30 @@ add_action( 'rest_api_init', function () {
 	) );
 } );
 
-/* ---------- Meldknop op de website ---------- */
+/* ---------- Balk op de website: Live, Pagina bewerken en Iets melden ---------- */
+
+/** Waar deze website draait: 'local' (localhost, .test, …), 'staging' of 'live'. */
+function theas_monitor_environment(): string {
+	$type = wp_get_environment_type();
+	$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+	if ( in_array( $type, array( 'local', 'development' ), true ) || in_array( $host, array( 'localhost', '127.0.0.1', '[::1]' ), true )
+		|| preg_match( '/\.(local|test|localhost)$/', $host ) ) {
+		return 'local';
+	}
+	return 'staging' === $type ? 'staging' : 'live';
+}
+
+/** Bewerklink voor wat je nu bekijkt (pagina, bericht, eigen berichttype of categorie), als de gebruiker dat mag. */
+function theas_monitor_edit_link(): string {
+	$object = get_queried_object();
+	if ( $object instanceof WP_Post ) {
+		return (string) get_edit_post_link( $object->ID, 'raw' );
+	}
+	if ( $object instanceof WP_Term ) {
+		return (string) get_edit_term_link( $object, $object->taxonomy );
+	}
+	return '';
+}
 
 function theas_monitor_feedback_button(): bool {
 	return is_user_logged_in() && ! is_admin() && ! is_customize_preview() && theas_monitor_feedback_settings()['button']
@@ -162,6 +186,9 @@ add_action( 'wp_enqueue_scripts', function () {
 		'nonce' => wp_create_nonce( 'wp_rest' ),
 		'user'  => get_current_user_id(),
 		'types' => THEAS_MONITOR_FEEDBACK_TYPES,
+		'env'   => theas_monitor_environment(),
+		'host'  => (string) wp_parse_url( home_url(), PHP_URL_HOST ),
+		'edit'  => theas_monitor_edit_link(),
 	) ) . ';', 'before' );
 } );
 

@@ -28,6 +28,7 @@ require __DIR__ . '/updater.php';
 require __DIR__ . '/gate.php';
 require __DIR__ . '/admin-menu.php';
 require __DIR__ . '/feedback.php';
+require __DIR__ . '/site-editor.php';
 
 register_activation_hook( __FILE__, 'theas_monitor_secret' );
 
@@ -479,7 +480,7 @@ function theas_monitor_settings_page(): void {
 			<table class="form-table" role="presentation">
 				<tr>
 					<th scope="row">Meldknop</th>
-					<td><label><input type="checkbox" name="feedback_button" value="1" <?php checked( $feedback['button'] ); ?>> Ingelogde gebruikers zien op de website een knop om iets te melden (met schermafbeelding en een gekozen element)</label></td>
+					<td><label><input type="checkbox" name="feedback_button" value="1" <?php checked( $feedback['button'] ); ?>> Ingelogde gebruikers zien op de website een balk met <em>Live</em>, <em>Pagina bewerken</em> en <em>Iets melden</em> (met schermafbeelding en een gekozen element)</label></td>
 				</tr>
 				<tr>
 					<th scope="row">Vraag op het dashboard</th>

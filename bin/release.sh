@@ -18,7 +18,15 @@ CURRENT="$(sed -n 's/^ \* Version: //p' theas-monitor.php)"
 [[ "$(printf '%s\n%s\n' "$CURRENT" "$VERSION" | sort -V | tail -1)" == "$VERSION" && "$CURRENT" != "$VERSION" ]] \
 	|| { echo "Versie $VERSION moet hoger zijn dan de huidige $CURRENT."; exit 1; }
 git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null && { echo "Tag v$VERSION bestaat al."; exit 1; }
-for f in theas-monitor.php updater.php; do php -l "$f" >/dev/null || { echo "Syntaxfout in $f."; exit 1; }; done
+# Syntaxcontrole van alle PHP-bestanden; zonder php op deze computer via een draaiende WordPress-container (Docker).
+if command -v php >/dev/null; then
+	lint() { php -l "$1" >/dev/null; }
+else
+	CONTAINER="$(docker ps --format '{{.Names}}' 2>/dev/null | grep -m1 -- '-wordpress-1$' || true)"
+	[[ -n "$CONTAINER" ]] || { echo "Geen php en geen draaiende WordPress-container voor de syntaxcontrole (start Docker: open -a Docker)."; exit 1; }
+	lint() { docker exec -i "$CONTAINER" php -l < "$1" >/dev/null; }
+fi
+for f in *.php; do lint "$f" || { echo "Syntaxfout in $f."; exit 1; }; done
 
 sed -i '' -e "s/^ \* Version: .*/ * Version: $VERSION/" -e "s/^const THEAS_MONITOR_VERSION = '.*';/const THEAS_MONITOR_VERSION = '$VERSION';/" theas-monitor.php
 git add -A

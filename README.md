@@ -18,14 +18,22 @@ pagina met een wachtwoordveld; ingelogde gebruikers, wp-admin en robots.txt blij
 
 ## Meldingen en vragen
 
-- **Op de website** zien ingelogde gebruikers rechtsonder een ronde knop (verslepen kan; de plek wordt onthouden).
-  Daarmee zet je fouten, wensen en vragen op een lijst (*Toevoegen*, ook over meerdere pagina's) en stuur je ze samen
+- **Op de website** zien ingelogde gebruikers rechtsonder een balk (verslepen kan; de plek wordt onthouden). Bovenin
+  staat dat je op de voorkant van de live website zit (lokaal: *Lokaal*), daaronder de knoppen *Pagina bewerken* (de
+  editor van wat je bekijkt) en *Iets melden*. Met *Iets melden* zet je fouten, wensen en vragen op een lijst (*Toevoegen*, ook over meerdere pagina's) en stuur je ze samen
   (*Versturen*), elk met desgewenst een gekozen element op de pagina en een schermafbeelding (kiezen, plakken of erin
   slepen; de knop legt uit hoe je er een maakt op je eigen systeem en in je browser).
 - **In wp-admin** staat op het dashboard de widget *Vraag aan Verymooi*.
 - Het Verymooi-dashboard haalt alles elk kwartier op (ondertekend) en toont het bij de website. Vragen gaan direct
   per mail naar de beheerder, fouten en wensen elke nacht om 0:00 in één mail.
 - Uitzetten per website bij *Instellingen → Verymooi Monitor*.
+
+## Site bewerken
+
+Bij een blokthema toont een klik op *Site bewerken* (adminbalk) of *Weergave → Editor* eerst een waarschuwing: bewerk
+daar alleen de header en de footer, en we raden af er verder veel te wijzigen. Daarna kun je toch doorgaan, of op de
+website meteen naar *Pagina bewerken*. In de site-editor zelf staat dezelfde waarschuwing bovenaan. Links die
+rechtstreeks naar de header, de footer of de patronen gaan, krijgen geen waarschuwing.
 
 ## Beheermenu
 

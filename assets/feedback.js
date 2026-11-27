@@ -1,12 +1,15 @@
 /**
- * Meldknop voor ingelogde gebruikers (Verymooi Monitor). Rechtsonder een ronde knop die je kunt verslepen (de plek
- * wordt onthouden). Een klik opent een venster: soort (fout, wens, vraag), bericht, een element op de pagina kiezen
- * (oranje kader) en een schermafbeelding toevoegen: kiezen, plakken of erin slepen. De knop Schermafbeelding legt uit
- * hoe je er een maakt, voor het systeem en de browser van de gebruiker (Mac, Windows, iPhone, Android, …).
+ * Balk voor ingelogde gebruikers (Verymooi Monitor). Rechtsonder een balk die je kunt verslepen (de plek wordt
+ * onthouden). Bovenin staat waar je bent ("Live · voorkant van de website", of Lokaal/Test), daaronder twee knoppen:
+ * "Pagina bewerken" (de editor van wat je bekijkt, als dat kan) en "Iets melden".
+ *
+ * "Iets melden" opent een venster: soort (fout, wens, vraag), bericht, een element op de pagina kiezen (oranje kader)
+ * en een schermafbeelding toevoegen: kiezen, plakken of erin slepen. De knop Schermafbeelding legt uit hoe je er een
+ * maakt, voor het systeem en de browser van de gebruiker (Mac, Windows, iPhone, Android, …).
  *
  * Verzoekpunten verzamelen: "Toevoegen" zet het punt op een lijst, die blijft staan als je naar een andere pagina gaat
  * (localStorage, per gebruiker); elk punt onthoudt zijn eigen pagina. "Versturen" stuurt de hele lijst. Het aantal staat
- * als bolletje op de knop.
+ * als bolletje op de knop Iets melden.
  *
  * Het kader volgt het gekozen element zolang het venster open is (ook bij scrollen in een onderdeel, inklappende menu's of
  * animaties), en het venster gaat opzij als het over het element zou vallen. Alles staat in een shadow root, zodat het
@@ -21,7 +24,19 @@
 	const POS = 'vmFeedbackPos';
 	const LIST = 'vmFeedbackList-' + cfg.user;
 	const MAX = 20;
-	const ICON_CHAT = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/><path d="M12 8v4.5M12 15.5v.01"/></svg>';
+	const svg = (paths) => '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths + '</svg>';
+	const ICON_CHAT = svg('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/><path d="M12 8v4.5M12 15.5v.01"/>');
+	const ICON_EDIT = svg('<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>');
+	const ENV = { live: 'Live', staging: 'Test', local: 'Lokaal' }[cfg.env] || 'Live';
+	const ENV_TITLE = {
+		live: 'Je bekijkt de live website (' + cfg.host + '). Wat je wijzigt, ziet iedereen meteen.',
+		staging: 'Je bekijkt de testomgeving (' + cfg.host + ').',
+		local: 'Je bekijkt de lokale kopie op deze computer (' + cfg.host + ').',
+	}[cfg.env] || '';
+	const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+	const EDIT = cfg.edit
+		? '<a class="btn" href="' + esc(cfg.edit) + '" draggable="false">' + ICON_EDIT + 'Pagina bewerken</a>'
+		: '<button type="button" class="btn" aria-disabled="true" title="Deze pagina heeft geen eigen inhoud om te bewerken (bijvoorbeeld een overzicht), of je mag hem niet bewerken.">' + ICON_EDIT + 'Pagina bewerken</button>';
 
 	const host = document.createElement('div');
 	host.id = 'verymooi-feedback';
@@ -32,13 +47,24 @@
 		+ '.ui { --ink: #1a1614; --paper: #f3f2ed; --card: #fbfaf7; --muted: #67625c; --line: rgba(26,22,20,.12); --orange: #ff8547; --danger: #c4531c;'
 		+ ' position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; font: 400 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); }'
 		+ '@media (prefers-color-scheme: dark) { .ui { --ink: #f5f4ef; --paper: #1f1c1a; --card: #262320; --muted: #aaa49c; --line: rgba(245,244,239,.14); } }'
-		+ '.fab { position: fixed; width: 48px; height: 48px; border: 0; border-radius: 50%; background: #1a1614; color: #f5f4ef; display: grid; place-items: center; cursor: grab; pointer-events: auto; touch-action: none;'
-		+ ' box-shadow: 0 0 0 2px rgba(255,255,255,.75), 0 2px 6px rgba(26,22,20,.18), 0 12px 28px -10px rgba(26,22,20,.45); transition: transform .15s ease; }'
-		+ '.fab:hover { transform: scale(1.06); } .fab:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; } .fab.is-dragging { cursor: grabbing; transform: scale(1.08); transition: none; }'
-		+ '.badge { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--orange); color: #1a1614; font: 700 11px/20px ui-sans-serif, -apple-system, sans-serif; text-align: center; box-shadow: 0 0 0 2px #fff; }'
+		+ '.dock { position: fixed; display: grid; gap: 8px; padding: 9px; border-radius: 16px; background: #1a1614; color: #f5f4ef; pointer-events: auto; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;'
+		+ ' box-shadow: 0 0 0 1px rgba(255,255,255,.1), 0 2px 6px rgba(26,22,20,.18), 0 16px 36px -12px rgba(26,22,20,.55); }'
+		+ '.dock.is-dragging { cursor: grabbing; }'
+		+ '.env { display: flex; align-items: center; gap: 7px; padding: 1px 3px 0; font-size: 12px; line-height: 16px; color: rgba(245,244,239,.7); white-space: nowrap; }'
+		+ '.env strong { color: #f5f4ef; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }'
+		+ '.dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #3ecf8e; box-shadow: 0 0 0 3px rgba(62,207,142,.25); }'
+		+ '.env--local .dot, .env--staging .dot { background: #ffb347; box-shadow: 0 0 0 3px rgba(255,179,71,.25); }'
+		+ '.btns { display: flex; gap: 6px; }'
+		+ '.btn { position: relative; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px; padding: 0 12px; border: 0; border-radius: 10px; background: rgba(245,244,239,.12); color: #f5f4ef;'
+		+ ' font: 600 13px/1 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; text-decoration: none; white-space: nowrap; cursor: pointer; -webkit-user-drag: none; }'
+		+ '.btn:hover { background: rgba(245,244,239,.2); } .btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }'
+		+ '.btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; } .btn[aria-disabled="true"]:hover { background: rgba(245,244,239,.12); }'
+		+ '.btn[aria-expanded="true"] { background: #f5f4ef; color: #1a1614; }'
+		+ '.btn svg { flex: none; }'
+		+ '.badge { position: absolute; top: -7px; right: -7px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: var(--orange); color: #1a1614; font: 700 11px/20px ui-sans-serif, -apple-system, sans-serif; text-align: center; box-shadow: 0 0 0 2px #1a1614; }'
 		+ '.panel { position: fixed; display: flex; flex-direction: column; width: min(360px, calc(100vw - 24px)); max-height: calc(100vh - 24px); padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); pointer-events: auto;'
 		+ ' box-shadow: 0 2px 6px rgba(26,22,20,.08), 0 28px 60px -18px rgba(26,22,20,.4); }'
-		+ '.panel[hidden], .fab[hidden], [hidden] { display: none !important; }'
+		+ '.panel[hidden], [hidden] { display: none !important; }'
 		+ '.scroll { min-height: 0; overflow: auto; margin: 0 -4px; padding: 0 4px; }'
 		+ 'h2 { margin: 0 0 10px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }'
 		+ 'h3 { margin: 0 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }'
@@ -96,14 +122,19 @@
 		+ '</div>'
 		+ '<div class="foot"><span class="status" role="status"></span><button type="button" class="add" title="Op de lijst zetten en het volgende punt toevoegen">Toevoegen</button><button type="button" class="send">Versturen</button></div>'
 		+ '</section>'
-		+ '<button type="button" class="fab" aria-label="Iets melden" title="Iets melden (sleep om te verplaatsen)">' + ICON_CHAT + '<span class="badge" hidden></span></button>'
+		+ '<div class="dock" role="group" aria-label="Verymooi" title="Sleep om te verplaatsen">'
+		+ '<div class="env env--' + esc(cfg.env || 'live') + '" title="' + esc(ENV_TITLE) + '"><span class="dot"></span><strong>' + ENV + '</strong><span>voorkant van de website</span></div>'
+		+ '<div class="btns">' + EDIT
+		+ '<button type="button" class="btn" data-report aria-expanded="false">' + ICON_CHAT + 'Iets melden<span class="badge" hidden></span></button>'
+		+ '</div></div>'
 		+ '</div>';
 	// Aan <html> en niet aan <body>: een thema met transform of filter op body zou de vaste plek anders verschuiven.
 	document.documentElement.append(host);
 
 	const $ = (sel) => root.querySelector(sel);
 	const ui = $('.ui');
-	const fab = $('.fab');
+	const dock = $('.dock');
+	const report = $('[data-report]');
 	const badge = $('.badge');
 	const panel = $('.panel');
 	const text = $('textarea');
@@ -137,9 +168,8 @@
 	setType('bug');
 	types.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setType(b.dataset.type); });
 
-	/* ------------------------------------------------------------ Plek van de knop en het venster */
+	/* ------------------------------------------------------------ Plek van de balk en het venster */
 
-	const SIZE = 48;
 	let pos = { right: 20, bottom: 20 };
 	try { pos = JSON.parse(localStorage.getItem(POS)) || pos; } catch (e) { /* geen opslag */ }
 
@@ -148,29 +178,30 @@
 
 	function place() {
 		if (!window.innerWidth) return; // tabblad nog zonder afmeting (op de achtergrond geladen)
-		pos.right = Math.min(Math.max(pos.right, 4), window.innerWidth - SIZE - 4);
-		pos.bottom = Math.min(Math.max(pos.bottom, 4), window.innerHeight - SIZE - 4);
-		fab.style.right = pos.right + 'px';
-		fab.style.bottom = pos.bottom + 'px';
+		const clamp = (v, max) => Math.max(0, Math.min(Math.max(v, 4), max));
+		pos.right = clamp(pos.right, window.innerWidth - dock.offsetWidth - 4);
+		pos.bottom = clamp(pos.bottom, window.innerHeight - dock.offsetHeight - 4);
+		dock.style.right = pos.right + 'px';
+		dock.style.bottom = pos.bottom + 'px';
 		if (!panel.hidden) placePanel();
 	}
 
 	const overlap = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
 
 	/**
-	 * Het venster naast de knop, aan de kant waar ruimte is. Valt het over het gekozen element, dan naar de andere
+	 * Het venster naast de balk, aan de kant waar ruimte is. Valt het over het gekozen element, dan naar de andere
 	 * kant van het scherm (links/rechts, en anders boven/onder).
 	 */
 	function placePanel() {
 		const o = offset();
-		const r = fab.getBoundingClientRect();
+		const r = dock.getBoundingClientRect();
 		const w = panel.offsetWidth;
 		const h = panel.offsetHeight;
 		const W = window.innerWidth;
 		const H = window.innerHeight;
 		const clampX = (x) => Math.min(Math.max(x, 12), W - w - 12);
 		const clampY = (y) => Math.min(Math.max(y, 12), H - h - 12);
-		let left = clampX(r.left + SIZE / 2 > W / 2 ? r.right - w : r.left);
+		let left = clampX(r.left + r.width / 2 > W / 2 ? r.right - w : r.left);
 		let top = clampY(r.top > H / 2 ? r.top - h - 12 : r.bottom + 12);
 		const target = element && element.node.isConnected ? element.node.getBoundingClientRect() : null;
 		if (target && target.width && overlap({ left, top, right: left + w, bottom: top + h }, target)) {
@@ -187,43 +218,53 @@
 		panel.style.top = (top - o.y) + 'px';
 	}
 
+	// Slepen kan overal op de balk, ook vanaf een knop. Pas na 5 pixels wordt het slepen; de klik daarna telt dan niet.
 	let drag = null;
-	fab.addEventListener('pointerdown', (e) => {
+	let dragged = false;
+	// De beweging volgen via het hele venster: bij snel slepen staat de muis meteen buiten de balk.
+	dock.addEventListener('pointerdown', (e) => {
+		dragged = false;
 		if (e.button !== 0) return;
 		drag = { id: e.pointerId, x: e.clientX, y: e.clientY, right: pos.right, bottom: pos.bottom, moved: false };
-		fab.setPointerCapture(e.pointerId);
 	});
-	fab.addEventListener('pointermove', (e) => {
+	window.addEventListener('pointermove', (e) => {
 		if (!drag || e.pointerId !== drag.id) return;
 		const dx = e.clientX - drag.x;
 		const dy = e.clientY - drag.y;
-		if (!drag.moved && Math.hypot(dx, dy) < 5) return;
-		drag.moved = true;
-		fab.classList.add('is-dragging');
+		if (!drag.moved) {
+			if (Math.hypot(dx, dy) < 5) return;
+			drag.moved = true;
+			dock.setPointerCapture(e.pointerId);
+			dock.classList.add('is-dragging');
+		}
 		pos.right = drag.right - dx;
 		pos.bottom = drag.bottom - dy;
 		place();
 	});
-	fab.addEventListener('pointerup', (e) => {
+	const endDrag = (e) => {
 		if (!drag || e.pointerId !== drag.id) return;
-		const moved = drag.moved;
-		drag = null;
-		fab.classList.remove('is-dragging');
-		if (moved) {
+		if (drag.moved) {
+			dragged = true;
 			try { localStorage.setItem(POS, JSON.stringify(pos)); } catch (err) { /* geen opslag */ }
-			return;
 		}
-		toggle(panel.hidden);
-	});
-	fab.addEventListener('keydown', (e) => {
-		if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(panel.hidden); }
-	});
+		drag = null;
+		dock.classList.remove('is-dragging');
+	};
+	window.addEventListener('pointerup', endDrag);
+	window.addEventListener('pointercancel', endDrag);
+	dock.addEventListener('dragstart', (e) => e.preventDefault());
+	dock.addEventListener('click', (e) => {
+		if (dragged || e.target.closest('[aria-disabled="true"]')) { e.preventDefault(); e.stopPropagation(); }
+		dragged = false;
+	}, true);
+	report.addEventListener('click', () => toggle(panel.hidden));
 	window.addEventListener('resize', place);
 	document.addEventListener('visibilitychange', place);
 	place();
 
 	function toggle(open) {
 		panel.hidden = !open;
+		report.setAttribute('aria-expanded', String(open));
 		if (open) {
 			renderList();
 			placePanel();

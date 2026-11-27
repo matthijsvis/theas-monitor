@@ -5,8 +5,9 @@ github.com/matthijsvis/theas-monitor (branch `main`). Alle wijzigingen aan de pl
 
 - `theas-monitor.php`: status-endpoint, SEO, fouten, eenmalig inloggen, instellingenpagina.
 - `gate.php`, `gate-page.php`, `assets/`: de website afschermen met een wachtwoord (vervangt Password Protected).
-- `feedback.php`, `assets/feedback.js`: meldknop op de website en widget *Vraag aan Verymooi* in wp-admin; het dashboard
-  haalt de meldingen op (`GET /feedback`, `POST /feedback/ack`).
+- `feedback.php`, `assets/feedback.js`: balk op de website (Live/Lokaal, *Pagina bewerken*, *Iets melden*) en widget
+  *Vraag aan Verymooi* in wp-admin; het dashboard haalt de meldingen op (`GET /feedback`, `POST /feedback/ack`).
+- `site-editor.php`, `assets/site-editor.js`: waarschuwing bij *Site bewerken* (blokthema's): alleen header en footer.
 - `admin-menu.php`: beheermenu met "Overig" (Dashboard, berichttypes, dan de rest ingeklapt).
 - `updater.php`: updates via GitHub-releases (`Update URI` + filter `update_plugins_github.com`).
 - `.github/workflows/release.yml`: bij een tag `v*` de zip `theas-monitor.zip` bouwen en een release publiceren.
@@ -19,7 +20,8 @@ github.com/matthijsvis/theas-monitor (branch `main`). Alle wijzigingen aan de pl
 - Uitbrengen: `bin/release.sh 1.2.0 "Wat er veranderd is"` (semver; hoger dan de huidige versie). Dat zet de versie
   op beide plekken in `theas-monitor.php`, commit, tagt, pusht en werkt de kopie in het verymooi-project bij.
   **Een release komt binnen 12 uur op alle gekoppelde websites terecht**: vraag de gebruiker altijd eerst om
-  bevestiging en controleer vooraf met `php -l`.
+  bevestiging en controleer vooraf met `php -l` (op deze Mac staat geen PHP: `docker exec -i <site>-wordpress-1 php -l < bestand.php`;
+  `bin/release.sh` doet dat zelf).
 - Teruggaan naar een oude versie: nooit tags verwijderen of herschrijven; breng een nieuwe, hogere versie uit met
   de oude code (`git checkout v1.1.0 -- theas-monitor.php updater.php`, dan `bin/release.sh`).
 
